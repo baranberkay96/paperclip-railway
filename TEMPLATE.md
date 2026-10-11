@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Name | **Paperclip AI Company HQ** (LISTINGS.md name, **no version label**: Paperclip is date-versioned and the pinned tag `v2026.1005.0` does not read naturally in a name, e.g. "Paperclip v2026.1005 AI Company HQ") |
-| Description | Run a team of AI agents with goals, budgets and org charts. Persistent setup. (77 chars, unchanged) |
+| Description | Run a team of AI agents with goals, budgets and org charts. (77 chars, unchanged) |
 | Category | AI/ML |
 | Tags | paperclip, ai-agents, multi-agent, claude-code, codex, orchestration, postgres |
 
