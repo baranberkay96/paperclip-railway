@@ -1,0 +1,253 @@
+{
+  "name": "Paperclip AI Company HQ",
+  "description": "Run a team of AI agents with goals, budgets and org charts. Persistent setup.",
+  "category": "AI/ML",
+  "tags": [
+    "paperclip",
+    "ai-agents",
+    "multi-agent",
+    "claude-code",
+    "codex",
+    "orchestration",
+    "postgres"
+  ],
+  "upstream": {
+    "repo": "paperclipai/paperclip",
+    "version": "v2026.1005.0",
+    "checked": "2026-10-10"
+  },
+  "services": {
+    "Paperclip": {
+      "icon": "https://raw.githubusercontent.com/paperclipai/paperclip/master/ui/public/apple-touch-icon.png",
+      "source": {
+        "image": "ghcr.io/paperclipai/paperclip:2026.1005.0"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": "/api/health",
+      "healthcheckTimeout": 300,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": true,
+      "targetPort": 3100,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/paperclip"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "3100",
+          "description": "Port the Paperclip server listens on; the public domain targets it.",
+          "required": false
+        },
+        "HOST": {
+          "defaultValue": "0.0.0.0",
+          "description": "Listen on all interfaces so Railway's edge and private network can reach the server.",
+          "required": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "${{Postgres.DATABASE_URL}}",
+          "description": "Postgres connection string on the private network (replaces the embedded database).",
+          "required": false
+        },
+        "PAPERCLIP_DEPLOYMENT_MODE": {
+          "defaultValue": "authenticated",
+          "description": "Login required (Better Auth). Never use local_trusted on a public URL.",
+          "required": false
+        },
+        "PAPERCLIP_DEPLOYMENT_EXPOSURE": {
+          "defaultValue": "private",
+          "description": "Upstream's appliance mode: enables the browser 'Claim this instance' first-admin flow and the hostname allow-list.",
+          "required": false
+        },
+        "PAPERCLIP_PUBLIC_URL": {
+          "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Canonical public URL for auth callbacks, invite links and the hostname allow-list. Change it when you add a custom domain.",
+          "required": false
+        },
+        "PAPERCLIP_ALLOWED_HOSTNAMES": {
+          "defaultValue": "healthcheck.railway.app,${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Extra hostnames accepted by the private-host guard: Railway's healthcheck and the private network. The public URL host is added automatically.",
+          "required": false
+        },
+        "BETTER_AUTH_SECRET": {
+          "defaultValue": "${{secret(64, \"abcdef0123456789\")}}",
+          "description": "Session signing secret for Better Auth (generated).",
+          "required": false
+        },
+        "PAPERCLIP_AGENT_JWT_SECRET": {
+          "defaultValue": "${{secret(64, \"abcdef0123456789\")}}",
+          "description": "Signing secret for short-lived agent API tokens (generated, kept separate from the session secret).",
+          "required": false
+        },
+        "PAPERCLIP_TOOL_ACTION_SIGNING_SECRET": {
+          "defaultValue": "${{secret(64, \"abcdef0123456789\")}}",
+          "description": "Signs tool-action approvals. Without it approvals cannot be issued (generated).",
+          "required": false
+        },
+        "PAPERCLIP_SECRETS_MASTER_KEY": {
+          "defaultValue": "${{secret(64, \"abcdef0123456789\")}}",
+          "description": "32-byte (64 hex) key encrypting company secrets in Postgres. Back it up; losing it makes stored secrets unreadable.",
+          "required": false
+        },
+        "PAPERCLIP_MIGRATION_AUTO_APPLY": {
+          "defaultValue": "true",
+          "description": "Apply database migrations automatically on start and upgrade.",
+          "required": false
+        },
+        "PAPERCLIP_AUTH_RATE_LIMIT_ENABLED": {
+          "defaultValue": "true",
+          "description": "Rate-limit sign-in attempts (off by default in private mode upstream).",
+          "required": false
+        },
+        "TRUST_PROXY": {
+          "defaultValue": "1",
+          "description": "Trust exactly one proxy hop (Railway's edge) for client IPs used by rate limiting.",
+          "required": false
+        },
+        "PAPERCLIP_STORAGE_PROVIDER": {
+          "defaultValue": "s3",
+          "description": "Store attachments and uploads in the Railway Bucket instead of the volume.",
+          "required": false
+        },
+        "PAPERCLIP_STORAGE_S3_BUCKET": {
+          "defaultValue": "${{Bucket.BUCKET}}",
+          "description": "Bucket name.",
+          "required": false
+        },
+        "PAPERCLIP_STORAGE_S3_REGION": {
+          "defaultValue": "${{Bucket.REGION}}",
+          "description": "Bucket region.",
+          "required": false
+        },
+        "PAPERCLIP_STORAGE_S3_ENDPOINT": {
+          "defaultValue": "${{Bucket.ENDPOINT}}",
+          "description": "S3 endpoint of the Railway Bucket (virtual-hosted style).",
+          "required": false
+        },
+        "PAPERCLIP_STORAGE_S3_PREFIX": {
+          "defaultValue": "paperclip",
+          "description": "Key prefix inside the bucket.",
+          "required": false
+        },
+        "AWS_ACCESS_KEY_ID": {
+          "defaultValue": "${{Bucket.ACCESS_KEY_ID}}",
+          "description": "Bucket access key (read by the AWS SDK).",
+          "required": false
+        },
+        "AWS_SECRET_ACCESS_KEY": {
+          "defaultValue": "${{Bucket.SECRET_ACCESS_KEY}}",
+          "description": "Bucket secret key (read by the AWS SDK).",
+          "required": false
+        },
+        "ANTHROPIC_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Lets claude_local agents run with an API key; alternatively run `claude` login via Railway SSH (stored on the volume).",
+          "required": false
+        },
+        "OPENAI_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Lets codex_local agents run with an API key; alternatively `codex login --device-auth` via Railway SSH.",
+          "required": false
+        },
+        "GEMINI_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Gemini API key (must be restricted to the Gemini API) for gemini_local agents.",
+          "required": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "30",
+          "description": "Lets running heartbeats and agent processes stop cleanly on redeploy.",
+          "required": false
+        }
+      }
+    },
+    "Postgres": {
+      "icon": "https://devicons.railway.app/i/postgresql.svg",
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:18"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": null,
+      "healthcheckTimeout": null,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/var/lib/postgresql/data"
+      },
+      "variables": {
+        "PGDATA": {
+          "defaultValue": "/var/lib/postgresql/data/pgdata",
+          "description": "Location where the database will be initialized",
+          "required": false
+        },
+        "PGHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Railway Private Domain Name.",
+          "required": false
+        },
+        "PGPORT": {
+          "defaultValue": "5432",
+          "description": "Port to connect to Postgres.",
+          "required": false
+        },
+        "PGUSER": {
+          "defaultValue": "${{ POSTGRES_USER }}",
+          "description": "Required variable for Data panel",
+          "required": false
+        },
+        "PGDATABASE": {
+          "defaultValue": "${{POSTGRES_DB}}",
+          "description": "Required variable for the data panel.",
+          "required": false
+        },
+        "PGPASSWORD": {
+          "defaultValue": "${{POSTGRES_PASSWORD}}",
+          "description": "Required variable for Data panel",
+          "required": false
+        },
+        "POSTGRES_DB": {
+          "defaultValue": "railway",
+          "description": "Default database created when image is started.",
+          "required": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}",
+          "description": "URL to connect to Postgres database.",
+          "required": false
+        },
+        "POSTGRES_USER": {
+          "defaultValue": "postgres",
+          "description": "User to connect to Postgres DB",
+          "required": false
+        },
+        "SSL_CERT_DAYS": {
+          "defaultValue": "820",
+          "description": "SSL certificate expiry in days.",
+          "required": false
+        },
+        "POSTGRES_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+          "description": "Password to connect to DB",
+          "required": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Allow Postgres to cleanly shut down",
+          "required": false
+        }
+      }
+    }
+  },
+  "buckets": [
+    "Bucket"
+  ]
+}
