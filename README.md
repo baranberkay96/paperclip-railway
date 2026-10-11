@@ -1,5 +1,7 @@
 # Deploy and Host Paperclip with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/paperclip-ai-company-hq)
+
 Paperclip is an open-source control plane for running a company staffed by AI agents. You set goals, an org chart and budgets, then hire agents such as Claude Code, Codex, OpenCode or Gemini CLI that work through tasks on a schedule and ask for your approval when needed. This template runs it with Postgres, a volume and object storage.
 
 ## About Hosting Paperclip
