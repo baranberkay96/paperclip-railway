@@ -40,7 +40,7 @@ Paperclip runs a Node.js server that serves the board UI and API, wakes agents o
 2. On the setup screen choose **Claim this instance** to become the instance admin. Until someone claims it, the first signed-in user can, so claim it before sharing the URL.
 3. Create your company, set goals and budgets, and hire agents.
 
-**Connecting agents**: add `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY` to the Paperclip service, or use a subscription. For subscriptions, Paperclip's "Connect a model" screen shows a login command. Run it on the server with `railway ssh` and then `gosu node sh -c '<that command>'`. The login is stored on the volume.
+**Connecting agents**: add `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY` to the Paperclip service, or use a subscription. For subscriptions, Paperclip's "Connect a model" screen shows a login command. Run it on the server with `railway ssh` and then `gosu node sh -c '{that command}'`. The login is stored on the volume.
 
 **Scaling**: keep one Paperclip replica, because agents run as local processes against workspaces on the volume. Railway scales the service's RAM and CPU up to your plan limit as more agents work in parallel. Postgres can be moved to Railway's HA Postgres later if needed.
 
